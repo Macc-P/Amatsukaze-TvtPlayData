@@ -1,0 +1,2 @@
+# Amatsukaze-TvtPlayData
+Amatsukazeのエンコード時にTVTestで使える番組情報・データ放送・字幕を出力するバッチ
