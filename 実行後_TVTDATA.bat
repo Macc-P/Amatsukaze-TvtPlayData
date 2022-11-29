@@ -17,12 +17,14 @@ rem exe類を別の場所に移動した場合は変更
 set exepath=bat\tvtdata\
 
 echo --- メタデータ処理 ---
+echo ツール類のパス：%exepath%
 set tsfile=%IN_PATH%
 
 echo [ログファイル処理]
 set LOG_PATH="%LOG_PATH:.log=.txt%"
 rem ログファイルから一時フォルダを取得
-for /f "tokens=1,5-6 delims=:" %%A in ('findstr /n "一時フォルダ" %LOG_PATH%') do (
+rem 行番号とデータ内容を取得
+for /f "tokens=1,3-4 delims=:" %%A in ('findstr /n "一時フォルダ" %LOG_PATH%') do (
 if %%A == 7 (
 set tempfolder=%%B:%%C
 goto endtempfolder
@@ -33,7 +35,8 @@ set tempfolder=%tempfolder:~1%
 set tempfolder=%tempfolder:/=\%
 
 rem ログファイルから出力先を取得
-for /f "tokens=1,5-6 delims=:" %%A in ('findstr /n "出力" %LOG_PATH%') do (
+rem 行番号とデータ内容を取得
+for /f "tokens=1,3-4 delims=:" %%A in ('findstr /n "出力" %LOG_PATH%') do (
 if %%A == 6 (
 set mp4file=%%B:%%C
 goto endmp4file
@@ -46,7 +49,7 @@ set mp4file=%mp4file:/=\%
 echo ログファイル処理終了
 
 rem 通常の場合チャプターを生成しない
-for /f "tokens=1,5-6 delims=:" %%A in ('findstr /n "通常" %LOG_PATH%') do (
+for /f "tokens=1,3-4 delims=:" %%A in ('findstr /n "通常" %LOG_PATH%') do (
 if %%A == 12 (
 echo 出力選択が通常モードのためチャプター生成をスキップ
 
@@ -112,7 +115,7 @@ echo データ放送・番組情報データ生成完了
 
 
 echo [字幕データ生成]
-tsreadex.exe -n -1 -r - "%tsfile%" | b24tovtt.exe -t vlc -d %frame%  -c "%tempfolder%\data.chapter" "%mp4file%.vtt"
+tsreadex.exe -n -1 -r - "%tsfile%" | b24tovtt.exe -t vlc -d %frame% -c "%tempfolder%\data.chapter" "%mp4file%.vtt"
 echo 字幕データ生成完了
 
 :option
